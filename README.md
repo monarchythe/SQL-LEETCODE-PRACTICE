@@ -71,8 +71,8 @@ Eight questions covering distinct patterns rather than variations:
 
 Suggested order (easiest to hardest, so momentum builds):
 
-- 1193 Monthly Transactions I — conditional aggregation
-- 1164 Product Price at a Given Date — latest-value-as-of
+- [x] 1193 Monthly Transactions I — conditional aggregation
+- [x] 1164 Product Price at a Given Date — latest-value-as-of   🔴 **REVISIT** 
 - 602 Friend Requests II — UNION ALL + group
 - 1045 Customers Who Bought All Products — relational division
 - 626 Exchange Seats — CASE with row arithmetic
