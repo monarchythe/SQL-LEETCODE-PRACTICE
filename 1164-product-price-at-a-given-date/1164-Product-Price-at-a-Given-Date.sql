@@ -1,17 +1,27 @@
--- Write your PostgreSQL query statement below
--- initial price = 10 
--- so i need to filter out all the prices with changes date < = 2019-08-16 
--- may be we can use case statement 
+# Write your MySQL query statement below
+with cte1_dictinct_ids as 
+(
+    select distinct product_id as product_id
+    from Products
+),
+cte2_ranked_ids as 
+-- this will rank 1 to all the product ids where date <= target date
+-- so for the product where date > target date ONLY the row will be missing
+(
+    select 
+        product_id,
+        new_price,
+        change_date,
+        row_number() over(partition by product_id order by change_date desc) as rankk
+    from Products
+    where change_date <= '2019-08-16'
+)
 
-with ranked_id as (select *,
-row_number() over(partition by product_id order by change_date desc) as rk
-from Products
-where change_date <= '2019-08-16'),
-distinct_ids as
-(select distinct product_id from Products)
+select 
+    cte1.product_id,
+    coalesce(cte2.new_price, 10) as price
+from cte1_dictinct_ids cte1
+left join cte2_ranked_ids cte2
+on cte1.product_id = cte2.product_id
+and rankk = 1
 
-select d.product_id, coalesce(r.new_price,10) as price
-from distinct_ids d
-left join ranked_id r 
-on d.product_id = r.product_id
-and rk = 1 ;----############## *********** V.IMP. ##########********* dont use WHERE rk = 1, it will kill the left join AFFECT FOR NULL -----****************
