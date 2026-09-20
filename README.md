@@ -80,7 +80,7 @@ Suggested order (easiest to hardest, so momentum builds):
 - 550 Game Play Analysis IV — self-join date logic
 - 185 Department Top Three Salaries — DENSE_RANK, the hard one
 
-Notes 
+# Imp Notes 
 
 How to handle NULL printing in the final result:
 
@@ -91,3 +91,54 @@ How to handle NULL printing in the final result:
 | COUNT(DISTINCT col)	| distinct non-null values |
 
 LeetCode seeds null-heavy test cases specifically to catch COUNT(col). Default to COUNT(*) unless you deliberately want to exclude nulls.
+
+## LEFT JOIN: `ON` vs `WHERE`
+
+> [!WARNING]
+> Putting a condition on the **right** table in `WHERE` silently turns your
+> `LEFT JOIN` into an `INNER JOIN`.
+
+### Why
+
+A `LEFT JOIN` keeps every left row. Unmatched left rows get `NULL` in all
+right-table columns. `WHERE` runs **after** the join, and `NULL = anything`
+is never true — so those rescued rows get filtered right back out.
+
+### The rule
+
+| Condition on | Goes in |
+|---|---|
+| Left table | `WHERE` (or `ON` — both work) |
+| Right table | `ON` only |
+
+### Example — LC 1164
+
+```sql
+-- BROKEN: products with no price change get dropped
+LEFT JOIN ranked r ON d.product_id = r.product_id
+WHERE r.rankk = 1
+
+-- CORRECT: filter restricts matching, doesn't filter output
+LEFT JOIN ranked r
+    ON d.product_id = r.product_id
+   AND r.rankk = 1
+```
+
+### Mental model
+
+- `ON` = "which right rows am I allowed to match?"
+- `WHERE` = "which result rows do I keep?"
+
+For a `LEFT JOIN`, anything that describes the right side belongs in `ON`.
+
+### The one exception
+
+`WHERE right_col IS NULL` after a `LEFT JOIN` is deliberate — that's the
+anti-join pattern for "find left rows with no match."
+
+```sql
+SELECT c.id
+FROM Customers c
+LEFT JOIN Orders o ON c.id = o.customer_id
+WHERE o.id IS NULL;   -- customers who never ordered
+```
