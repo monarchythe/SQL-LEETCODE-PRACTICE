@@ -27,6 +27,7 @@ After completing SQL STRIVERS SHEET of 110 Questions, I am diving into LEETCODE.
 - 1661 Average Time of Process per Machine
 - 1731 The Number of Employees Which Report to Each Employee
 - 1789 Primary Department for Each Employee
+- 1148-article-views-i - ***the distinction b/w SELF join and same select query = .***
 
 ### Medium (18)
 
