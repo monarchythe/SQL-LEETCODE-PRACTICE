@@ -69,7 +69,16 @@ Eight questions covering distinct patterns rather than variations:
 | 1193 Monthly Transactions I | Conditional aggregation with `SUM(CASE WHEN …)` |
 | 602 Friend Requests II | `UNION ALL` then group, bidirectional relationships |
 
+Suggested order (easiest to hardest, so momentum builds):
 
+- 1193 Monthly Transactions I — conditional aggregation
+- 1164 Product Price at a Given Date — latest-value-as-of
+- 602 Friend Requests II — UNION ALL + group
+- 1045 Customers Who Bought All Products — relational division
+- 626 Exchange Seats — CASE with row arithmetic
+- 180 Consecutive Numbers — LAG/LEAD
+- 550 Game Play Analysis IV — self-join date logic
+- 185 Department Top Three Salaries — DENSE_RANK, the hard one
 
 Notes 
 
