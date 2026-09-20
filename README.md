@@ -68,3 +68,17 @@ Eight questions covering distinct patterns rather than variations:
 | 1164 Product Price at a Given Date | Latest-value-as-of-date |
 | 1193 Monthly Transactions I | Conditional aggregation with `SUM(CASE WHEN …)` |
 | 602 Friend Requests II | `UNION ALL` then group, bidirectional relationships |
+
+
+
+Notes 
+
+How to handle NULL printing in the final result:
+
+| Expression | Counts |
+|---|---|
+| COUNT(*) |	all rows |
+| COUNT(col) |	rows where col IS NOT NULL |
+| COUNT(DISTINCT col)	| distinct non-null values |
+
+LeetCode seeds null-heavy test cases specifically to catch COUNT(col). Default to COUNT(*) unless you deliberately want to exclude nulls.
