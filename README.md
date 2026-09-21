@@ -75,10 +75,10 @@ Suggested order (easiest to hardest, so momentum builds):
 - [x] 1164 Product Price at a Given Date — latest-value-as-of  <- 🔴 **REVISIT** 
 - [x] 602 Friend Requests II — UNION ALL + group
 - [x] 1045 Customers Who Bought All Products — relational division  <- 🔴 **REVISIT** 
-- 626 Exchange Seats — CASE with row arithmetic
-- 180 Consecutive Numbers — LAG/LEAD
-- 550 Game Play Analysis IV — self-join date logic
-- 185 Department Top Three Salaries — DENSE_RANK, the hard one
+- [x] 626 Exchange Seats — CASE with row arithmetic
+- [x] 180 Consecutive Numbers — LAG/LEAD  <- 🔴 **REVISIT** 
+- [x] 550 Game Play Analysis IV — self-join date logic. <- 🔴 **REVISIT** 
+- [x] 185 Department Top Three Salaries — DENSE_RANK, the hard one
 
 # Imp Notes 
 
@@ -142,3 +142,52 @@ FROM Customers c
 LEFT JOIN Orders o ON c.id = o.customer_id
 WHERE o.id IS NULL;   -- customers who never ordered
 ```
+
+## 550 Game Play Analysis IV — Revision Notes
+
+> [!TIP]
+> **Pattern:** "Did X happen right after the FIRST event?" →
+> `ROW_NUMBER` to isolate the first row + `LEAD` to see the next one.
+
+### The 6 lessons
+
+**1. "First" means isolate it.**
+Counting every consecutive pair overcounts. Use `ROW_NUMBER() = 1` to keep only each player's first row, *then* check its neighbor.
+
+**2. Many window functions, one SELECT.**
+Each is just another column.
+
+```sql
+LEAD(event_date) OVER w AS next,
+ROW_NUMBER()     OVER w AS rn
+...
+WINDOW w AS (PARTITION BY player_id ORDER BY event_date)
+```
+
+**3. Can't filter a window function in the same `WHERE`.**
+Window functions run after `WHERE`. Wrap in a CTE, filter outside.
+
+**4. Never subtract dates directly — use `DATEDIFF`.**
+
+| Expression | Mar 31 → Apr 1 |
+|---|---|
+| `next - event_date` | `70` ❌ |
+| `DATEDIFF(next, event_date)` | `1` ✅ |
+
+**5. `SELECT` without `FROM` is valid.**
+Evaluates the expression once, returns one row. Scalar subqueries bring their own `FROM`.
+
+```sql
+SELECT ROUND((SELECT ...) / (SELECT ...), 2) AS fraction
+```
+
+**6. Watch integer division across dialects.**
+
+| Dialect | `1 / 3` |
+|---|---|
+| MySQL | `0.3333` |
+| Postgres / SQL Server | `0` ❌ → use `1.0 * a / b` |
+
+### One-liner to remember
+
+> **Rank to find the first, lead to see the next, DATEDIFF to measure the gap.**
